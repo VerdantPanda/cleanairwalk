@@ -6,6 +6,7 @@ const port = 3000;
 const Pollutant = require('./models/pollutant');
 const axios = require('axios');
 
+
 // import {getGoogleRoutes} from './network'
 const network = require("./network");
 
@@ -20,7 +21,8 @@ connection.once('open', () => {
 
 app.get('/', async (req, res) => {
     // const popcorn = initMap();
-    const a = await network.getGoogleRoutes();
+    //const a = await network.getGoogleRoutes();
+    const b = await network.getTreeData(0,0,0,0);
     res.send("hello ibrahim")
 });
 
