@@ -2,7 +2,7 @@ function getTreeData(){
 }
 
 function getPollutants(){
-    return null;
+    return nulljnldnz;
 }
 
 function getFastestRoute(start, end){
