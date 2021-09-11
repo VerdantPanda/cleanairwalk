@@ -5,6 +5,9 @@ const app = express();
 const port = 3000;
 const Pollutant = require('./models/pollutant');
 
+// import {getGoogleRoutes} from './network'
+const network = require("./network");
+
 //connect to mongodb
 const dbURI = 'mongodb+srv://husseinfk:cleanairwalk@cluster0.wqacm.mongodb.net/cleanairwalkdb?retryWrites=true&w=majority';
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -14,9 +17,10 @@ connection.once('open', () => {
 });
 
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     // const popcorn = initMap();
-    res.send('Hello World!')
+    const a = await network.getGoogleRoutes();
+    res.send("hello ibrahim")
 });
 
 
