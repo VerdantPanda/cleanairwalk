@@ -1,31 +1,58 @@
 
-const express = require('express')
-const app = express()
-const port = 3000
+const express = require('express');
+const mongoose = require('mongoose');
+const app = express();
+const port = 3000;
+const Pollutant = require('./models/pollutant');
+
+//connect to mongodb
+const dbURI = 'mongodb+srv://husseinfk:cleanairwalk@cluster0.wqacm.mongodb.net/cleanairwalkdb?retryWrites=true&w=majority';
+mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
+const { connection } = mongoose;
+connection.once('open', () => {
+  console.log('MongoDB database connection established successfully');
+});
+
 
 app.get('/', (req, res) => {
-    const popcorn = initMap();
-
-
-    
+    // const popcorn = initMap();
     res.send('Hello World!')
+});
+
+
+app.post('/pollutant', (req, res) => {
+  const pollutant = new Pollutant({
+      type: 'smokers',
+      coordinates: '2.5,3.9',
+      description: 'Saw 2 people smoking'
+  });
+
+  pollutant.save()
+      .then((result) => {
+          console.log(result)
+      })
+      .catch((err) => { 
+          console.log(err);
+      });
 })
+
 
 
 
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
-})
+});
 
 
 
-function initMap() {
-    const map = new google.maps.Map(document.getElementById("map"), {
-      zoom: 13,
-      center: { lat: 34.04924594193164, lng: -118.24104309082031 },
-    });
-    const trafficLayer = new google.maps.TrafficLayer();
+// function initMap() {
+//     const map = new google.maps.Map(document.getElementById("map"), {
+//       zoom: 13,
+//       center: { lat: 34.04924594193164, lng: -118.24104309082031 },
+//     });
+//     const trafficLayer = new google.maps.TrafficLayer();
   
-    trafficLayer.setMap(map);
-  }
+//     trafficLayer.setMap(map);
+//   }
+
