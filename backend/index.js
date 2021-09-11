@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const app = express();
 const port = 3000;
 const Pollutant = require('./models/pollutant');
+const axios = require('axios');
 
 //connect to mongodb
 const dbURI = 'mongodb+srv://husseinfk:cleanairwalk@cluster0.wqacm.mongodb.net/cleanairwalkdb?retryWrites=true&w=majority';
@@ -13,13 +14,13 @@ connection.once('open', () => {
   console.log('MongoDB database connection established successfully');
 });
 
-fetch('https://reqres.in/api/users')
-  .then(res => res.json())
-  .then(data => console.log(data))
+
+
 
 
 app.get('/', (req, res) => {
     // const popcorn = initMap();
+ 
     res.send('Hello World!')
 });
 
