@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "clean-air-walk",
+    "slug": "clean-air-walk",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "clean-air-walk"
+}
