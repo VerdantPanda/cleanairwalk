@@ -13,6 +13,10 @@ connection.once('open', () => {
   console.log('MongoDB database connection established successfully');
 });
 
+fetch('https://reqres.in/api/users')
+  .then(res => res.json())
+  .then(data => console.log(data))
+
 
 app.get('/', (req, res) => {
     // const popcorn = initMap();
