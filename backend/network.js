@@ -7,8 +7,62 @@ function getTreeData(latMin, latMax, longMin, longMAx){
     .then((res1) => console.log(res1));
 }
 
-function getPollutants(){
+async function getPollutants(x1, y1, x2, y2){
+    //THIS WORKS: const a = await network.getPollutants(40.0099,-75.106,39.8771,-75.2292);
+    let SouthLatitude = Math.min(y1,y2);
+    let WestLongitude = Math.min(x1, x2);
+    let NorthLatitude = Math.max(y1,y2);
+    let EastLongitude = Math.max(x1, x2);
     // Bing data
+    let param = {key: 'AsG8C10P1r4un1G-8Dcj1q1HcW49PirBjyJF1fPs3qZopFgdw35KEAyd2Hswc6tT',}
+    let toURL = new URLSearchParams(param).toString()
+    let req = 'http://dev.virtualearth.net/REST/v1/Traffic/Incidents/' + WestLongitude.toString().substr(0,6) +','+ SouthLatitude.toString().substr(0,6)  +','+ EastLongitude.toString().substr(0,6)  +','+ NorthLatitude.toString().substr(0,6)  + '?' + toURL;
+    // This works for some reason
+    //http://dev.virtualearth.net/REST/v1/Traffic/Incidents/39.8771,-75.106,40.0099,-75.2292?key=AsG8C10P1r4un1G-8Dcj1q1HcW49PirBjyJF1fPs3qZopFgdw35KEAyd2Hswc6tT
+    
+
+    try {
+        let ret = await axios.get(req);
+        let resources = ret.data.resourceSets[0].resources.map((elem) => {
+            let typeMap = {
+                1: 'Accident',
+                2: 'Congestion',
+                3: 'Disabled Vehicle',
+                4: 'Mass Transit',
+                5: 'Miscellaneous',
+                6: 'Other News',
+                7: 'Planned Event',
+                8: 'Road Hazard',
+                9: 'Construction',
+                10: 'Alert',
+                11: 'Weather',
+            };
+
+            let severityMap = {
+                1: 'Low Impact',
+                2: 'Minor',
+                3: 'Moderate',
+                4: 'Serious',
+            }
+
+            let newElem = {
+                point: elem.point.coordinates,
+                description: elem.description,
+                roadClosed: elem.roadClosed,
+                severity: severityMap[elem.severity],
+                title: elem.title,
+                type: typeMap[elem.type]
+            };
+            return newElem
+        });
+
+        return resources;
+
+    } catch (e){
+        console.log('SAD BOI TIMES');
+        console.log(e);
+        return [];
+    }
 }
 
 function getUserAggravators(){
@@ -44,4 +98,4 @@ async function getGoogleRoutes(st, ed){
     return ret;
 }
 
-module.exports = {getGoogleRoutes};
+module.exports = {getGoogleRoutes, getPollutants};
