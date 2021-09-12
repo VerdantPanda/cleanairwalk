@@ -18,7 +18,8 @@ const network = require("./network");
 
 app.get('/', async (req, res) => {
     // const popcorn = initMap();
-    //const a = await network.getGoogleRoutes();
+    // const a = await network.getGoogleRoutes();
+    const c = await network.getTreesInPath("Mount Peace Cemetary Philadelphia", "Liberty Bell")
     const b = await network.getTreeData(40.05864596731028, -75.36192699094755,39.81693102473079, -74.89463170303289);
     // This endpoint is mostly for testing stuff
   res.send("hello ibrahim")
