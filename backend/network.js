@@ -8,24 +8,39 @@ function getTreeData(latMin, latMax, longMin, longMAx){
 }
 
 function getPollutants(){
-}
-
-function getFastestRoute(start, end){
+    // Bing data
 }
 
 function getUserAggravators(){
+    // Stuff from MOngoDB
 }
 
 async function getGoogleRoutes(st, ed){
     let start = st ?? 'University of Pennsylvania';
-    let end = ed ?? 'Drexel University';
+    let end = ed ?? 'Temple University';
     let param = {origin: start, destination : ed, alternatives: 'true', key: 'AIzaSyB0RgvtIWMPCWwaaACCNYe2PKhY82YeOL0', travelMode : 'WALKING'}
     let toURL = new URLSearchParams(param).toString()
     let ret = await axios.get('https://maps.googleapis.com/maps/api/directions/json?' + toURL);
-
-    // console.log('\n\n\n\n\n\n________')
-    // console.log(ret.data.routes[0].legs);
-
+    let routes = ret.data.routes.map((route) => route.legs[0]);
+    /*
+    distance: { text: '99.6 mi', value: 160361 },
+    duration: { text: '1 hour 51 mins', value: 6684 },
+    end_address: '224 Mulberry St, New York, NY 10012, USA',
+    end_location: { lat: 40.722348, lng: -73.9961201 },
+    start_address: 'Philadelphia, PA 19104, USA',
+    start_location: { lat: 39.9476279, lng: -75.1878833 },
+    steps: [
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object]
+    ],
+    traffic_speed_entry: [],
+    via_waypoint: []
+    */
     return ret;
 }
 

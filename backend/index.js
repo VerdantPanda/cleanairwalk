@@ -17,14 +17,13 @@ const network = require("./network");
 
 
 app.get('/', async (req, res) => {
-    // const popcorn = initMap();
-    res.send("hello ibrahim")
+  // This endpoint is mostly for testing stuff
+  const a = await network.getGoogleRoutes();
+  res.send("hello ibrahim")
 });
 
 app.get('/route', async (req, res) => {
   const { start, end, maxTime, transportType, pollutionTolerance } = req.body;
-  const a = await network.getGoogleRoutes();
-
   // mongodb call to get the polluntants list.
   // calculate polluntant score
   
