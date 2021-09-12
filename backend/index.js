@@ -5,43 +5,50 @@ const app = express();
 const port = 3000;
 const Pollutant = require('./models/pollutant');
 const axios = require('axios');
-
-// import {getGoogleRoutes} from './network'
 const network = require("./network");
 
 //connect to mongodb
-const dbURI = 'mongodb+srv://husseinfk:cleanairwalk@cluster0.wqacm.mongodb.net/cleanairwalkdb?retryWrites=true&w=majority';
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
-const { connection } = mongoose;
-connection.once('open', () => {
-  console.log('MongoDB database connection established successfully');
-});
+// const dbURI = 'mongodb+srv://husseinfk:cleanairwalk@cluster0.wqacm.mongodb.net/cleanairwalkdb?retryWrites=true&w=majority';
+// mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
+// const { connection } = mongoose;
+// connection.once('open', () => {
+//   console.log('MongoDB database connection established successfully');
+// });
 
 
 app.get('/', async (req, res) => {
     // const popcorn = initMap();
-    const a = await network.getGoogleRoutes();
     res.send("hello ibrahim")
+});
+
+app.get('/route', async (req, res) => {
+  const { start, end, maxTime, transportType, pollutionTolerance } = req.body;
+  const a = await network.getGoogleRoutes();
+
+  // mongodb call to get the polluntants list.
+  // calculate polluntant score
+  
+  // calculate tree score
+  // tollerance logic
+  // send back to front end as a JSON
+  res.send("hello ibrahim")
 });
 
 
 app.post('/pollutant', (req, res) => {
   const pollutant = new Pollutant({
-      type: 'smokers',
-      coordinates: '2.5,3.9',
-      description: 'Saw 2 people smoking'
+      type: req.body.type,
+      coordinates: [req.body.lat, req.body.long],
+      description: req.body.description
   });
-
   pollutant.save()
       .then((result) => {
-          console.log(result)
+          console.log("saved aggravator pollutant")
       })
       .catch((err) => { 
           console.log(err);
       });
-})
-
-
+});
 
 
 

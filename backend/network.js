@@ -23,8 +23,8 @@ async function getGoogleRoutes(st, ed){
     let toURL = new URLSearchParams(param).toString()
     let ret = await axios.get('https://maps.googleapis.com/maps/api/directions/json?' + toURL);
 
-    console.log('\n\n\n\n\n\n________')
-    console.log(ret.data.routes[0].legs);
+    // console.log('\n\n\n\n\n\n________')
+    // console.log(ret.data.routes[0].legs);
 
     return ret;
 }
