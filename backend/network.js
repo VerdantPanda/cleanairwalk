@@ -20,7 +20,6 @@ async function getPollutants(x1, y1, x2, y2){
     // This works for some reason
     //http://dev.virtualearth.net/REST/v1/Traffic/Incidents/39.8771,-75.106,40.0099,-75.2292?key=AsG8C10P1r4un1G-8Dcj1q1HcW49PirBjyJF1fPs3qZopFgdw35KEAyd2Hswc6tT
     
-
     try {
         let ret = await axios.get(req);
         let resources = ret.data.resourceSets[0].resources.map((elem) => {

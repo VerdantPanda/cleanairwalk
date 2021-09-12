@@ -18,8 +18,7 @@ const network = require("./network");
 
 app.get('/', async (req, res) => {
   // This endpoint is mostly for testing stuff
-  // const a = await network.getPollutants(39.954744811336944, -75.19912147920824, 39.953820268860966, -75.18686793130426);
-  const a = await network.getPollutants(40.0099,-75.106,39.8771,-75.2292);
+
   res.send("hello ibrahim")
 });
 
