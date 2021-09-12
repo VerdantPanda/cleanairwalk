@@ -1,10 +1,37 @@
 const axios = require('axios');
+const fs = require('fs');
 
-function getTreeData(latMin, latMax, longMin, longMAx){
+
+async function getTreeData(x1, y1, x2, y2){
     // https://services.arcgis.com/fLeGjb7u4uXqeF9q/arcgis/rest/services/PPR_StreetTrees/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=JSON&f=html&token=
-    axios.get('https://services.arcgis.com/fLeGjb7u4uXqeF9q/arcgis/rest/services/PPR_StreetTrees/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=')
-    .then((res) => res.json())
-    .then((res1) => console.log(res1));
+    const jsonFile = fs.readFileSync('PPR_StreetTrees.json');
+    let res = JSON.parse(jsonFile);
+
+    //console.log('cat dog')
+    // var array = [];
+    var features = res.features;
+    var result = [];
+    var bigX = Math.max(x1, x2);
+    var bigY = Math.max(y1, y2);
+    var smallX = Math.min(x1, x2);
+    var smallY = Math.min(y1,y2);
+    var count = 0;
+    
+    //result.push([smallX, bigY]);
+    //console.log(features[0].geometry.coordinates);
+    features.forEach(async function(tree) {
+        var pos = tree.geometry.coordinates;
+        
+
+        if(pos[1] >= smallX && pos[1] <= bigX && pos[0] >= smallY && pos[0] <= bigY) {
+            
+            result.push(pos);
+            count = count + 1;
+           
+        }
+    });
+        
+    return result;
 }
 
 async function getPollutants(x1, y1, x2, y2){
@@ -69,9 +96,9 @@ function getUserAggravators(){
 }
 
 async function getGoogleRoutes(st, ed){
-    let start = st ?? 'University of Pennsylvania';
-    let end = ed ?? 'Temple University';
-    let param = {origin: start, destination : ed, alternatives: 'true', key: 'AIzaSyB0RgvtIWMPCWwaaACCNYe2PKhY82YeOL0', travelMode : 'WALKING'}
+    let start = st;
+    let end = ed;
+    let param = {origin: start, destination : end, alternatives: 'true', key: 'AIzaSyB0RgvtIWMPCWwaaACCNYe2PKhY82YeOL0', travelMode : 'WALKING'}
     let toURL = new URLSearchParams(param).toString()
     let ret = await axios.get('https://maps.googleapis.com/maps/api/directions/json?' + toURL);
     let routes = ret.data.routes.map((route) => route.legs[0]);
@@ -94,7 +121,32 @@ async function getGoogleRoutes(st, ed){
     traffic_speed_entry: [],
     via_waypoint: []
     */
-    return ret;
+
+    // console.log(routes)
+
+    return routes;
 }
 
-module.exports = {getGoogleRoutes, getPollutants};
+async function getTreesInPath(st, ed) {
+    let routes = await getGoogleRoutes(st, ed)
+    let routesToScoreMap = []
+    // console.log('Size: ' + routes.length)
+
+    for (var route of routes) {
+        let routeSteps = route['steps']
+        // console.log(route)
+        let totalTrees = 0
+        for (var step of routeSteps) {
+            let treeData = await getTreeData(step['start_location']['lat'], step['start_location']['lng'], step['end_location']['lat'], step['end_location']['lng'])
+            totalTrees += treeData.length
+        }
+
+        routesToScoreMap.push([totalTrees, route]) 
+    }
+    
+    console.log(routesToScoreMap)
+
+    return routesToScoreMap
+}
+
+module.exports = {getGoogleRoutes, getTreeData, getTreesInPath, getPollutants};
